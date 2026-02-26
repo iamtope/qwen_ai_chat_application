@@ -39,23 +39,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Architecture
 
-```
-┌─────────────────────────────────────────────────┐
-│               Docker Compose                    │
-│                                                 │
-│  ┌──────────────┐    ┌────────────────────────┐ │
-│  │  Frontend     │    │  Backend               │ │
-│  │  nginx :3000  │───▶│  FastAPI :8000         │ │
-│  │  React SPA    │    │  Qwen 0.5B (GGUF)     │ │
-│  └──────────────┘    │  llama.cpp inference   │ │
-│                      └────────────────────────┘ │
-│                             │                   │
-│                      ┌──────┴──────┐            │
-│                      │ model-cache │            │
-│                      │  (volume)   │            │
-│                      └─────────────┘            │
-└─────────────────────────────────────────────────┘
-```
+![Architecture Diagram](docs/architecture.png)
 
 ## API Endpoints
 
