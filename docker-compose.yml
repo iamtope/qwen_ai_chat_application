@@ -1,0 +1,45 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "${API_PORT:-8000}:8000"
+    environment:
+      - MODEL_REPO=${MODEL_REPO:-Qwen/Qwen2.5-0.5B-Instruct-GGUF}
+      - MODEL_FILENAME=${MODEL_FILENAME:-qwen2.5-0.5b-instruct-q5_k_m.gguf}
+      - N_CTX=${N_CTX:-8192}
+      - MAX_NEW_TOKENS=${MAX_NEW_TOKENS:-200}
+      - GENERATION_TIMEOUT_S=${GENERATION_TIMEOUT_S:-30.0}
+      - CORS_ORIGINS=${CORS_ORIGINS:-["http://localhost:3000"]}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - TEMPERATURE=${TEMPERATURE:-0.7}
+      - TOP_P=${TOP_P:-0.9}
+      - REPETITION_PENALTY=${REPETITION_PENALTY:-1.1}
+      - MAX_HISTORY_MESSAGES=${MAX_HISTORY_MESSAGES:-10}
+      - NUM_THREADS=${NUM_THREADS:-0}
+      - HF_HOME=/model-cache
+    volumes:
+      - model-cache:/model-cache
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  model-cache:
